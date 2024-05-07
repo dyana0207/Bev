@@ -1,0 +1,33 @@
+név: Node.js csomag
+
+tovább:
+  kiadás:
+    típusok: [létrehozva]
+
+állások:
+  épít:
+    futó: ubuntu-latest
+    lépések:
+      - használja: action/checkout@v4
+      - használja: action/setup-node@v4
+        val vel:
+          csomópont-verzió: 16
+      - futás: npm ci
+      - futás: npm teszt
+
+  közzététel-gpr:
+    igények: építeni
+    futó: ubuntu-latest
+    engedélyek:
+      csomagok: írj
+      tartalom: olvasd el
+    lépések:
+      - használja: action/checkout@v4
+      - használja: action/setup-node@v4
+        val vel:
+          csomópont-verzió: 16
+          registry-url: https://npm.pkg.github.com/
+      - futás: npm ci
+      - futás: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
