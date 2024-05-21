@@ -33,9 +33,10 @@ public class PuzzleState implements State<Direction> {
      */
     public IntegerProperty MOVES = new SimpleIntegerProperty();
 
-    private static ArrayList<Integer> RowCannon=new ArrayList<>(Arrays.asList(0,2,1,0,2,0,0,1,2,0,2,0,2,0,0));
 
-    private static ArrayList<Integer> ColumnCannon=new ArrayList<>(Arrays.asList(0,1,2,0,1,0,2,1,2,0,2,1,2,0,0));
+    private final static ArrayList<Integer> RowCannon=new ArrayList<>(Arrays.asList(0,2,1,0,2,0,0,1,2,0,2,0,2,0,0));
+
+    private final static ArrayList<Integer> ColumnCannon=new ArrayList<>(Arrays.asList(0,1,2,0,1,0,2,1,2,0,2,1,2,0,0));
 
     private Position[] positions;
 
@@ -45,7 +46,6 @@ public class PuzzleState implements State<Direction> {
                 new Position(14, 6),
                 new Position(14, 14));
     }
-
     public PuzzleState(Position... positions) {
         this.positions = positions.clone();
     }
@@ -77,6 +77,14 @@ public class PuzzleState implements State<Direction> {
         return positions[i].equals(positions[j]);
     }
 
+    private boolean canMoveBlackBlock(Position position){
+        if (position.equals(positions[BLACK_BLOCK1]) ||
+                position.equals(positions[BLACK_BLOCK2])) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean isLegalMove(Direction direction) {
         return switch (direction) {
@@ -90,8 +98,8 @@ public class PuzzleState implements State<Direction> {
     private boolean canMoveUp() {
 
         var up = positions[SOLDIER].moveUp();
-
         if(positions[SOLDIER].row() > 0 &&
+                canMoveBlackBlock(up) &&
                 ((getCannonColumnIndex(up.row())==ACTIVE.get() && getCannonRowIndex(up.col())==ACTIVE.get())
                         || (getCannonColumnIndex(up.row())==0 && getCannonRowIndex(up.col())==0)
                         || (getCannonColumnIndex(up.row())==ACTIVE.get() && getCannonRowIndex(up.col())!=ACTIVE.get())
@@ -105,6 +113,7 @@ public class PuzzleState implements State<Direction> {
         var right = positions[SOLDIER].moveRight();
 
         if(positions[SOLDIER].col() < positions[BOARD_SIZE].col() &&
+                canMoveBlackBlock(right) &&
                 ((getCannonRowIndex(right.col())==ACTIVE.get() && getCannonColumnIndex(right.row())==ACTIVE.get())
                         || (getCannonRowIndex(right.col())==0 && getCannonColumnIndex(right.row())==0)
                         || (getCannonRowIndex(right.col())==ACTIVE.get() && getCannonColumnIndex(right.row())!=ACTIVE.get())
@@ -118,6 +127,7 @@ public class PuzzleState implements State<Direction> {
         var down = positions[SOLDIER].moveDown();
 
         if(positions[SOLDIER].row() < positions[BOARD_SIZE].row() &&
+                canMoveBlackBlock(down) &&
                 ((getCannonColumnIndex(down.row())==ACTIVE.get() && getCannonRowIndex(down.col())==ACTIVE.get())
                         || (getCannonColumnIndex(down.row())==0 && getCannonRowIndex(down.col())==0)
                         || (getCannonColumnIndex(down.row())==ACTIVE.get() && getCannonRowIndex(down.col())!=ACTIVE.get())
@@ -132,6 +142,7 @@ public class PuzzleState implements State<Direction> {
         var left = positions[SOLDIER].moveLeft();
 
         if(positions[SOLDIER].col() >0 &&
+                canMoveBlackBlock(left) &&
                 ((getCannonRowIndex(left.col())==ACTIVE.get() && getCannonColumnIndex(left.row())==ACTIVE.get())
                         || (getCannonRowIndex(left.col())==0 && getCannonColumnIndex(left.row())==0)
                         || (getCannonRowIndex(left.col())==ACTIVE.get() && getCannonColumnIndex(left.row())!=ACTIVE.get())
@@ -156,7 +167,6 @@ public class PuzzleState implements State<Direction> {
 
     @Override
     public void makeMove(Direction direction) {
-       // System.out.println(ACTIVE);
         switch (direction) {
             case UP -> moveUp();
             case RIGHT -> moveRight();
@@ -203,17 +213,28 @@ public class PuzzleState implements State<Direction> {
     }
 
     private boolean isOnBoard(Position position) {
-        return position.row() >= 0 && position.row() < BOARD_SIZE &&
-                position.col() >= 0 && position.col() < BOARD_SIZE;
+        return position.row() >= 0 && position.row() <= positions[BOARD_SIZE].row() &&
+                position.col() >= 0 && position.col() <= positions[BOARD_SIZE].col();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        return (o instanceof PuzzleState other) && Arrays.equals(positions, other.positions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(positions);
+    }
 
     @Override
     public PuzzleState clone() {
         PuzzleState copy = null;
         try {
             copy = (PuzzleState) super.clone();
-            // Az ACTIVE és MOVES tulajdonságok másolása
             copy.ACTIVE = new SimpleIntegerProperty(this.ACTIVE.get());
             copy.MOVES = new SimpleIntegerProperty(this.MOVES.get());
         } catch (CloneNotSupportedException e) {
