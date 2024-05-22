@@ -9,8 +9,8 @@
     <description><!-- TODO: a brief description of your project --></description>
     <developers>
         <developer>
-            <name><!-- TODO: your full name --></name>
-            <email><!-- TODO: your email address --></email>
+            <name>Orosz Diána</name>
+            <email>diana5236@mailbox.unideb.hu</email>
             <organization>Faculty of Informatics, University of Debrecen</organization>
             <organizationUrl>https://inf.unideb.hu/</organizationUrl>
         </developer>
@@ -24,6 +24,7 @@
         <jacoco.version>0.8.12</jacoco.version>
         <maven.checkstyle.version>3.3.1</maven.checkstyle.version>
         <maven.surefire.version>3.0.0</maven.surefire.version>
+        <tinylog.version>2.7.0</tinylog.version>
 
         <exec.mainClass><!-- TODO: the fully-qualified class name of your class that contains the main() method to launch the application --></exec.mainClass>
     </properties>
@@ -57,6 +58,18 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>${tinylog.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <version>${tinylog.version}</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <build>

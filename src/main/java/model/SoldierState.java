@@ -1,12 +1,16 @@
 package model;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import puzzle.State;
 
 import java.util.*;
 
-public class PuzzleState implements State<Direction> {
+public class SoldierState implements State<Direction> {
 
     public static final int SOLDIER = 0;
 
@@ -38,22 +42,30 @@ public class PuzzleState implements State<Direction> {
 
     private final static ArrayList<Integer> ColumnCannon=new ArrayList<>(Arrays.asList(0,1,2,0,1,0,2,1,2,0,2,1,2,0,0));
 
-    private Position[] positions;
+    private final ReadOnlyObjectWrapper<Position>[] positions;
+    private final ReadOnlyBooleanWrapper solved;
 
-    public PuzzleState() {
+    public SoldierState() {
         this( new Position(0, 0),
                 new Position(13, 13),
                 new Position(14, 6),
                 new Position(14, 14));
     }
-    public PuzzleState(Position... positions) {
-        this.positions = positions.clone();
+    public SoldierState(Position... positions) {
+
+        //this.positions = positions.clone();
+        this.positions = new ReadOnlyObjectWrapper[4];
+        for (var i = 0; i < 4; i++) {
+            this.positions[i] = new ReadOnlyObjectWrapper<>(positions[i]);
+        }
+        solved = new ReadOnlyBooleanWrapper();
+        solved.bind(this.positions[0].isEqualTo(this.positions[3]));
     }
 
 
-    public void numberOfMovesForMove(IntegerProperty number){
+    /*public void numberOfMovesForMove(IntegerProperty number){
         this.MOVES=number;
-    }
+    }*/
 
     public Integer getCannonRowIndex(int i){
         return RowCannon.get(i);
@@ -64,13 +76,18 @@ public class PuzzleState implements State<Direction> {
     }
 
     public Position getPosition(int n) {
-        return positions[n];
+        return positions[n].get();
     }
 
+    public ReadOnlyObjectProperty<Position> positionProperty() {
+        return positions[0].getReadOnlyProperty();
+    }
 
-    @Override
     public boolean isSolved() {
-        return haveEqualPositions(SOLDIER, BOARD_SIZE);
+        return solved.get();
+    }
+    public ReadOnlyBooleanProperty solvedProperty() {
+        return solved.getReadOnlyProperty();
     }
 
     private boolean haveEqualPositions(int i, int j) {
@@ -78,8 +95,8 @@ public class PuzzleState implements State<Direction> {
     }
 
     private boolean canMoveBlackBlock(Position position){
-        if (position.equals(positions[BLACK_BLOCK1]) ||
-                position.equals(positions[BLACK_BLOCK2])) {
+        if (position.equals(getPosition(BLACK_BLOCK1))||
+                position.equals(getPosition(BLACK_BLOCK2))){
             return false;
         }
         return true;
@@ -97,8 +114,8 @@ public class PuzzleState implements State<Direction> {
 
     private boolean canMoveUp() {
 
-        var up = positions[SOLDIER].moveUp();
-        if(positions[SOLDIER].row() > 0 &&
+        var up = getPosition(SOLDIER).moveUp();
+        if(getPosition(SOLDIER).row() > 0 &&
                 canMoveBlackBlock(up) &&
                 ((getCannonColumnIndex(up.row())==ACTIVE.get() && getCannonRowIndex(up.col())==ACTIVE.get())
                         || (getCannonColumnIndex(up.row())==0 && getCannonRowIndex(up.col())==0)
@@ -110,9 +127,9 @@ public class PuzzleState implements State<Direction> {
         return false;
     }
     private boolean canMoveRight() {
-        var right = positions[SOLDIER].moveRight();
+        var right = getPosition(SOLDIER).moveRight();
 
-        if(positions[SOLDIER].col() < positions[BOARD_SIZE].col() &&
+        if(getPosition(SOLDIER).col() < getPosition(BOARD_SIZE).col() &&
                 canMoveBlackBlock(right) &&
                 ((getCannonRowIndex(right.col())==ACTIVE.get() && getCannonColumnIndex(right.row())==ACTIVE.get())
                         || (getCannonRowIndex(right.col())==0 && getCannonColumnIndex(right.row())==0)
@@ -124,9 +141,9 @@ public class PuzzleState implements State<Direction> {
         return false;
     }
     private boolean canMoveDown() {
-        var down = positions[SOLDIER].moveDown();
+        var down = getPosition(SOLDIER).moveDown();
 
-        if(positions[SOLDIER].row() < positions[BOARD_SIZE].row() &&
+        if(getPosition(SOLDIER).row() < getPosition(BOARD_SIZE).row() &&
                 canMoveBlackBlock(down) &&
                 ((getCannonColumnIndex(down.row())==ACTIVE.get() && getCannonRowIndex(down.col())==ACTIVE.get())
                         || (getCannonColumnIndex(down.row())==0 && getCannonRowIndex(down.col())==0)
@@ -139,9 +156,9 @@ public class PuzzleState implements State<Direction> {
     }
 
     private boolean canMoveLeft() {
-        var left = positions[SOLDIER].moveLeft();
+        var left = getPosition(SOLDIER).moveLeft();
 
-        if(positions[SOLDIER].col() >0 &&
+        if(getPosition(SOLDIER).col() >0 &&
                 canMoveBlackBlock(left) &&
                 ((getCannonRowIndex(left.col())==ACTIVE.get() && getCannonColumnIndex(left.row())==ACTIVE.get())
                         || (getCannonRowIndex(left.col())==0 && getCannonColumnIndex(left.row())==0)
@@ -197,8 +214,8 @@ public class PuzzleState implements State<Direction> {
 
     }
     private void moveSoldier(Direction direction) {
-        var newPosition =  positions[SOLDIER].move(direction);
-        positions[SOLDIER] = newPosition;
+        var newPosition = getPosition(0).move(direction);
+        positions[0].set(newPosition);
     }
 
     @Override
@@ -212,36 +229,31 @@ public class PuzzleState implements State<Direction> {
         return legalMoves;
     }
 
-    private boolean isOnBoard(Position position) {
-        return position.row() >= 0 && position.row() <= positions[BOARD_SIZE].row() &&
-                position.col() >= 0 && position.col() <= positions[BOARD_SIZE].col();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
         }
-        return (o instanceof PuzzleState other) && Arrays.equals(positions, other.positions);
-    }
+        return (o instanceof SoldierState other)
+                && getPosition(SOLDIER).equals(other.getPosition(SOLDIER))
+                && getPosition(BLACK_BLOCK1).equals(other.getPosition(BLACK_BLOCK1))
+                && getPosition(BLACK_BLOCK2).equals(other.getPosition(BLACK_BLOCK2))
+                && getPosition(BOARD_SIZE).equals(other.getPosition(BOARD_SIZE));    }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(positions);
+        return Objects.hash(getPosition(SOLDIER), getPosition(BLACK_BLOCK1),
+                getPosition(BLACK_BLOCK2), getPosition(BOARD_SIZE));
     }
 
     @Override
-    public PuzzleState clone() {
-        PuzzleState copy = null;
-        try {
-            copy = (PuzzleState) super.clone();
-            copy.ACTIVE = new SimpleIntegerProperty(this.ACTIVE.get());
-            copy.MOVES = new SimpleIntegerProperty(this.MOVES.get());
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-        copy.positions = positions.clone();
+    public SoldierState clone() {
+        SoldierState copy = new SoldierState(getPosition(SOLDIER), getPosition(BLACK_BLOCK1),
+                getPosition(BLACK_BLOCK2), getPosition(BOARD_SIZE));
+
+        copy.ACTIVE.set(this.ACTIVE.get());
         return copy;
+
     }
 
 
