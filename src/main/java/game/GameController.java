@@ -1,22 +1,40 @@
 package game;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import lombok.Setter;
 import model.Direction;
-import model.Position;
 import model.SoldierState;
 import org.tinylog.Logger;
+import result.GameResult;
+import result.JsonGameResultManager;
+import util.DurationUtil;
 import util.javafx.ImageStorage;
 import util.OrdinalImageStorage;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 public class GameController {
@@ -32,17 +50,30 @@ public class GameController {
     private GridPane col_grid;
     @FXML
     private GridPane row_grid;
+    @FXML
+    private TextField numberofSteps;
+    @Setter
+    private String playerName;
+    @FXML
+    private Label stopwatchLabel;
 
     private SoldierState state;
 
-    @Setter
-    private String playerName;
+    private final IntegerProperty steps = new SimpleIntegerProperty(0);
+    private Instant startTime;
+    private AnimationTimer timer;
 
     @FXML
     private void initialize() {
         loadCannon();
         resetGame();
         registerKeyEventHandler();
+        bindNumberOfMoves();
+        startTimer();
+    }
+
+    private void bindNumberOfMoves() {
+        numberofSteps.textProperty().bind(steps.asString());
     }
     private void loadCannon(){
         int rows = 16;
@@ -76,6 +107,8 @@ public class GameController {
         clearGrid();
         createState();
         populateGrid();
+        steps.set(0);
+        startTimer();
     }
     private void createState() {
         state = new SoldierState();
@@ -92,10 +125,67 @@ public class GameController {
         var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Game Over");
         alert.setContentText("Congratulations, you have solved the puzzle!");
+        saveGameResult();
+        stopTimer();
         alert.showAndWait();
-        resetGame();
+        showHighScoreTable();
+        //resetGame();
+        Platform.exit();
     }
 
+    private void showHighScoreTable() {
+        try {
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/table.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("High Score Table");
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            Logger.error(e, "Failed to load high score table", e);
+        }
+    }
+
+    private void saveGameResult() {
+        Duration elapsed = Duration.between(startTime, Instant.now());
+        var gameResult = GameResult.builder()
+                .playerName(playerName)
+                .solved(true)
+                .steps(steps.get())
+                .duration(elapsed)
+                .created(ZonedDateTime.now())
+                .build();
+
+        try {
+            var gameResultManager = new JsonGameResultManager(Path.of("results.json"));
+            gameResultManager.add(gameResult);
+            Logger.info("Game result saved: {}", gameResult);
+        } catch (IOException e) {
+            Logger.error(e, "Failed to save game result");
+        }
+    }
+
+
+    private void startTimer() {
+         startTime = Instant.now();
+
+         timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                Duration elapsed = Duration.between(startTime, Instant.now());
+                stopwatchLabel.setText(DurationUtil.formatDuration(elapsed));
+            }
+        };
+        timer.start();
+    }
+
+    private void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
+    }
 
     private void clearGrid() {
         for (int row = 0; row < 15; row++) {
@@ -184,7 +274,7 @@ public class GameController {
             Logger.info("Moving {}", direction);
             state.makeMove(direction);
             Logger.trace("New state after move: {}", state);
-            //numberOfMoves.set(numberOfMoves.get() + 1);
+            steps.set(steps.get() + 1);
         } else {
             Logger.warn("Illegal move: {}", direction);
         }
