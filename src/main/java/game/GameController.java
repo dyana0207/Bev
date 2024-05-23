@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import lombok.Setter;
 import model.Direction;
 import model.Position;
 import model.SoldierState;
@@ -33,6 +34,9 @@ public class GameController {
     private GridPane row_grid;
 
     private SoldierState state;
+
+    @Setter
+    private String playerName;
 
     @FXML
     private void initialize() {
@@ -71,8 +75,7 @@ public class GameController {
     private void resetGame() {
         clearGrid();
         createState();
-
-        clearAndPopulateGrid();
+        populateGrid();
     }
     private void createState() {
         state = new SoldierState();
@@ -90,11 +93,8 @@ public class GameController {
         alert.setHeaderText("Game Over");
         alert.setContentText("Congratulations, you have solved the puzzle!");
         alert.showAndWait();
-        //restartGame();
+        resetGame();
     }
-
-
-
 
 
     private void clearGrid() {
@@ -107,7 +107,7 @@ public class GameController {
     }
 
 
-    private void clearAndPopulateGrid() {
+    private void populateGrid() {
         for (var row = 0; row < grid.getRowCount(); row++) {
             for (var col = 0; col < grid.getColumnCount(); col++) {
                 var square = createSquare(row, col);
@@ -130,7 +130,6 @@ public class GameController {
         square.setOnMouseClicked(this::handleMouseClick);
         return square;
     }
-
 
 
     private ImageView createImageViewForPieceOnPosition(int index, int row, int col) {
