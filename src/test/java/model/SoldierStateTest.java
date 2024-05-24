@@ -63,13 +63,11 @@ public class SoldierStateTest {
 
     @Test
     void testIsLegalMove() {
-        // soldierState tests
         assertFalse(soldierState.isLegalMove(Direction.UP));
         assertFalse(soldierState.isLegalMove(Direction.RIGHT));
         assertTrue(soldierState.isLegalMove(Direction.DOWN));
         assertFalse(soldierState.isLegalMove(Direction.LEFT));
 
-        // deadEndState tests
         assertFalse(deadEndState.isLegalMove(Direction.UP));
         assertFalse(deadEndState.isLegalMove(Direction.RIGHT));
         assertFalse(deadEndState.isLegalMove(Direction.DOWN));

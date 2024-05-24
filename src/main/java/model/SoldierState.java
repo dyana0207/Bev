@@ -12,12 +12,24 @@ import java.util.*;
 
 public class SoldierState implements State<Direction> {
 
+    /**
+     * The size of the soldier
+     */
     public static final int SOLDIER = 0;
 
+    /**
+     * The size of the first black block.
+     */
     public static final int BLACK_BLOCK1 = 1;
 
+    /**
+     * The size of the second black block.
+     */
     public static final int BLACK_BLOCK2 = 2;
 
+    /**
+     * The size of the board.
+     */
     public static final int BOARD_SIZE = 3;
 
     public IntegerProperty ACTIVE = new SimpleIntegerProperty(1);
@@ -30,12 +42,21 @@ public class SoldierState implements State<Direction> {
     private final ReadOnlyObjectWrapper<Position>[] positions;
     private final ReadOnlyBooleanWrapper solved;
 
+    /**
+     * Creates a {@code SoldierState} object that corresponds to the initial state of the puzzle.
+     */
     public SoldierState() {
         this( new Position(0, 0),
                 new Position(13, 13),
                 new Position(14, 6),
                 new Position(14, 14));
     }
+
+    /**
+     * Creates a {@code SoldierState} object initializing the positions of the pieces with the positions specified.
+     *
+     * @param positions the initial positions of the pieces
+     */
     public SoldierState(Position... positions) {
         this.positions = new ReadOnlyObjectWrapper[4];
         for (var i = 0; i < 4; i++) {
@@ -45,22 +66,50 @@ public class SoldierState implements State<Direction> {
         solved.bind(this.positions[0].isEqualTo(this.positions[3]));
     }
 
+    /**
+     * Returns the row index of the cannon for a given index.
+     *
+     * @param i the index of the cannon
+     * @return the row index of the cannon
+     */
     public Integer getCannonRowIndex(int i){
         return RowCannon.get(i);
     }
 
+    /**
+     * Returns the column index of the cannon for a given index.
+     *
+     * @param i the index of the cannon
+     * @return the column index of the cannon
+     */
     public Integer getCannonColumnIndex(int i){
         return ColumnCannon.get(i);
     }
 
+    /**
+     * Returns a copy of the position of the piece specified.
+     *
+     * @param n the number of a piece
+     * @return the position of the piece
+     */
     public Position getPosition(int n) {
         return positions[n].get();
     }
 
+    /**
+     * Returns the property of the position of the soldier.
+     *
+     * @return the property of the position of the soldier
+     */
     public ReadOnlyObjectProperty<Position> positionProperty() {
         return positions[0].getReadOnlyProperty();
     }
 
+    /**
+     * Returns whether the puzzle is solved.
+     *
+     * @return true if the puzzle is solved, false otherwise
+     */
     public boolean isSolved() {
         return solved.get();
     }
@@ -68,6 +117,12 @@ public class SoldierState implements State<Direction> {
         return solved.getReadOnlyProperty();
     }
 
+    /**
+     * Checks if the black block can be moved to the specified position.
+     *
+     * @param position the position to check
+     * @return true if the black block can be moved, false otherwise
+     */
     private boolean canMoveBlackBlock(Position position){
         if (position.equals(getPosition(BLACK_BLOCK1))||
                 position.equals(getPosition(BLACK_BLOCK2))){
@@ -76,6 +131,12 @@ public class SoldierState implements State<Direction> {
         return true;
     }
 
+    /**
+     * Returns whether the move in the specified direction is legal.
+     *
+     * @param direction a direction to which the soldier is intended to be moved
+     * @return whether the move in the specified direction is legal
+     */
     @Override
     public boolean isLegalMove(Direction direction) {
         return switch (direction) {
@@ -156,6 +217,11 @@ public class SoldierState implements State<Direction> {
         return true;
     }
 
+    /**
+     * Moves the soldier to the direction specified.
+     *
+     * @param direction the direction to which the soldier is moved
+     */
     @Override
     public void makeMove(Direction direction) {
         switch (direction) {
@@ -187,11 +253,22 @@ public class SoldierState implements State<Direction> {
         moveSoldier(Direction.LEFT);
 
     }
+
+    /**
+     * Moves the soldier to the direction specified.
+     *
+     * @param direction the direction to which the soldier is moved
+     */
     private void moveSoldier(Direction direction) {
         var newPosition = getPosition(0).move(direction);
         positions[0].set(newPosition);
     }
 
+    /**
+     * Returns the set of legal moves for the soldier.
+     *
+     * @return the set of legal moves
+     */
     @Override
     public Set<Direction> getLegalMoves() {
         var legalMoves = EnumSet.noneOf(Direction.class);
@@ -229,7 +306,6 @@ public class SoldierState implements State<Direction> {
         return copy;
 
     }
-
 
     @Override
     public String toString() {

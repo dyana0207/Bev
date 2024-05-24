@@ -21,5 +21,11 @@
   "solved" : true,
   "steps" : 38,
   "duration" : 22.631406000,
-  "created" : "2024-05-24T15:57:28.0571051+02:00"
+  "created" : "2024-05-24T13:57:28.0571051Z"
+}, {
+  "playerName" : "Dina",
+  "solved" : true,
+  "steps" : 38,
+  "duration" : 20.501110600,
+  "created" : "2024-05-24T19:28:59.4331737+02:00"
 } ]

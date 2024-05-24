@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * An interface for managing game results.
+ */
 public interface GameResultManager {
     List<GameResult> add(GameResult result) throws IOException;
 

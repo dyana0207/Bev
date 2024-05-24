@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Represents the four main directions.
+ */
 public enum Direction {
 
     UP(-1, 0),
