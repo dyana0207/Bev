@@ -1,31 +1,7 @@
 [ {
-  "playerName" : "Brandon",
-  "solved" : false,
-  "steps" : 47,
-  "duration" : 53.000000000,
-  "created" : "2024-05-22T10:16:35.2112208Z"
-}, {
-  "playerName" : "dd",
+  "playerName" : "Alma",
   "solved" : true,
   "steps" : 38,
-  "duration" : 17.602290200,
-  "created" : "2024-05-24T13:50:53.877169Z"
-}, {
-  "playerName" : "andi",
-  "solved" : true,
-  "steps" : 38,
-  "duration" : 17.586810200,
-  "created" : "2024-05-24T13:56:53.2967068Z"
-}, {
-  "playerName" : "andi",
-  "solved" : true,
-  "steps" : 38,
-  "duration" : 22.631406000,
-  "created" : "2024-05-24T13:57:28.0571051Z"
-}, {
-  "playerName" : "Dina",
-  "solved" : true,
-  "steps" : 38,
-  "duration" : 20.501110600,
-  "created" : "2024-05-24T19:28:59.4331737+02:00"
+  "duration" : 16.809748200,
+  "created" : "2024-05-24T19:52:15.7519892+02:00"
 } ]
