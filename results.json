@@ -5,45 +5,21 @@
   "duration" : 53.000000000,
   "created" : "2024-05-22T10:16:35.2112208Z"
 }, {
-  "playerName" : "Cody",
-  "solved" : true,
-  "steps" : 25,
-  "duration" : 76.000000000,
-  "created" : "2024-05-22T10:15:35.6129561Z"
-}, {
-  "playerName" : "Lynda",
-  "solved" : false,
-  "steps" : 28,
-  "duration" : 20.000000000,
-  "created" : "2024-05-22T09:46:35.6658149Z"
-}, {
   "playerName" : "dd",
   "solved" : true,
   "steps" : 38,
-  "duration" : 120.000000000,
-  "created" : "2024-05-23T18:47:14.0415674Z"
+  "duration" : 17.602290200,
+  "created" : "2024-05-24T13:50:53.877169Z"
 }, {
-  "playerName" : "Alma",
+  "playerName" : "andi",
   "solved" : true,
   "steps" : 38,
-  "duration" : 120.000000000,
-  "created" : "2024-05-23T19:06:19.9649944Z"
+  "duration" : 17.586810200,
+  "created" : "2024-05-24T13:56:53.2967068Z"
 }, {
-  "playerName" : "aa",
+  "playerName" : "andi",
   "solved" : true,
   "steps" : 38,
-  "duration" : 21.047823500,
-  "created" : "2024-05-23T19:17:35.4890872Z"
-}, {
-  "playerName" : "Annaa",
-  "solved" : true,
-  "steps" : 38,
-  "duration" : 18.345423900,
-  "created" : "2024-05-23T19:20:36.253327Z"
-}, {
-  "playerName" : "Szamóca",
-  "solved" : true,
-  "steps" : 42,
-  "duration" : 24.379173000,
-  "created" : "2024-05-23T22:06:28.3462783+02:00"
+  "duration" : 22.631406000,
+  "created" : "2024-05-24T15:57:28.0571051+02:00"
 } ]

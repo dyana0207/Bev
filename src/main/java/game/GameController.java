@@ -125,12 +125,10 @@ public class GameController {
         var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Game Over");
         alert.setContentText("Congratulations, you have solved the puzzle!");
-        saveGameResult();
         stopTimer();
+        saveGameResult();
         alert.showAndWait();
         showHighScoreTable();
-        //resetGame();
-        Platform.exit();
     }
 
     private void showHighScoreTable() {
@@ -142,6 +140,7 @@ public class GameController {
             stage.setTitle("High Score Table");
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            stage.setOnCloseRequest(event -> resetGame());
             stage.show();
         } catch (IOException e) {
             Logger.error(e, "Failed to load high score table", e);
@@ -169,9 +168,13 @@ public class GameController {
 
 
     private void startTimer() {
-         startTime = Instant.now();
+        startTime = Instant.now();
+        if (timer != null) {
+            timer.stop();
+        }
 
-         timer = new AnimationTimer() {
+
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 Duration elapsed = Duration.between(startTime, Instant.now());
@@ -182,9 +185,8 @@ public class GameController {
     }
 
     private void stopTimer() {
-        if (timer != null) {
-            timer.stop();
-        }
+        timer.stop();
+        Logger.info("Timer stopped.");
     }
 
     private void clearGrid() {

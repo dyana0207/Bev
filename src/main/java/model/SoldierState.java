@@ -14,28 +14,13 @@ public class SoldierState implements State<Direction> {
 
     public static final int SOLDIER = 0;
 
-    /**
-     * Az egyik fekete tilos mező indexe
-     */
     public static final int BLACK_BLOCK1 = 1;
 
-    /**
-     * A másik fekete tilos mező indexe
-     */
     public static final int BLACK_BLOCK2 = 2;
 
-    /**
-     * Atábla méretének indexe
-     */
     public static final int BOARD_SIZE = 3;
-    /**
-     * Az aktív ágyú indexe
-     */
+
     public IntegerProperty ACTIVE = new SimpleIntegerProperty(1);
-    /**
-     * A lépések számának változója
-     */
-    public IntegerProperty MOVES = new SimpleIntegerProperty();
 
 
     private final static ArrayList<Integer> RowCannon=new ArrayList<>(Arrays.asList(0,2,1,0,2,0,0,1,2,0,2,0,2,0,0));
@@ -52,8 +37,6 @@ public class SoldierState implements State<Direction> {
                 new Position(14, 14));
     }
     public SoldierState(Position... positions) {
-
-        //this.positions = positions.clone();
         this.positions = new ReadOnlyObjectWrapper[4];
         for (var i = 0; i < 4; i++) {
             this.positions[i] = new ReadOnlyObjectWrapper<>(positions[i]);
@@ -61,11 +44,6 @@ public class SoldierState implements State<Direction> {
         solved = new ReadOnlyBooleanWrapper();
         solved.bind(this.positions[0].isEqualTo(this.positions[3]));
     }
-
-
-    /*public void numberOfMovesForMove(IntegerProperty number){
-        this.MOVES=number;
-    }*/
 
     public Integer getCannonRowIndex(int i){
         return RowCannon.get(i);
@@ -88,10 +66,6 @@ public class SoldierState implements State<Direction> {
     }
     public ReadOnlyBooleanProperty solvedProperty() {
         return solved.getReadOnlyProperty();
-    }
-
-    private boolean haveEqualPositions(int i, int j) {
-        return positions[i].equals(positions[j]);
     }
 
     private boolean canMoveBlackBlock(Position position){
