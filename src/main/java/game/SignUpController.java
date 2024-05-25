@@ -15,8 +15,6 @@ import java.io.IOException;
 
 public class SignUpController {
 
-    //@Inject
-    private FXMLLoader fxmlLoader;
     @FXML
     private TextField playerNameTextField;
 
