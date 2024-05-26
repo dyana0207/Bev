@@ -124,7 +124,7 @@ public class GameController {
     private void showSolvedAlert() {
         var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Game Over");
-        alert.setContentText("Congratulations, you have solved the puzzle!");
+        alert.setContentText("Congratulations, you have solved the game!");
         stopTimer();
         saveGameResult();
         alert.showAndWait();
